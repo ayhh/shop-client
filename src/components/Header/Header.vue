@@ -41,6 +41,7 @@
               type="text"
               id="autocomplete"
               class="input-error input-xxlarge"
+              v-model="keyword"
             />
             <button class="sui-btn btn-xlarge btn-danger" type="button" @click="toSearch">
               搜索
@@ -56,11 +57,21 @@
 export default {
   name: "Header",
   data() {
-    return {};
+    return {
+      keyword: ''
+    };
   },
   methods: {
     toSearch(){
-      this.$router.push('/search')
+      // this.$router.push('/search'+ this.keyword +'?keyword='+this.keyword.toUpperCase())
+      // this.$router.push(`/search/${this.keyword}?keyword=${this.keyword.toUpperCase()}`)
+      this.$router.push({
+        name: 'search',
+        params:{keyword:this.keyword || undefined},
+        query:{keyword:this.keyword.toUpperCase() || undefined}
+      }).catch((err) =>{
+        // console.log(err);
+      })
     }
   },
 };
