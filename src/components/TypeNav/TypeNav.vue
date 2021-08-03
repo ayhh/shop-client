@@ -1,10 +1,10 @@
 <template>
   <div class="type-nav">
     <div class="container">
-      <div @mouseleave="currentIndex = -1">
+      <div @mouseleave="moveOut" @mouseenter="isShow = true">
         <h2 class="all">全部商品分类</h2>
-        <div class="sort">
-          <div class="all-sort-list2">
+        <div class="sort" v-show="isShow">
+          <div class="all-sort-list2" @click="toSearch">
             <div
               class="item"
               :class="{ item_high: currentIndex === index }"
@@ -13,24 +13,39 @@
               @mouseenter="moveInItem(index)"
             >
               <h3>
-                <a href="">{{ c1.categoryName }}</a>
+                <a
+                  href="javascript:;"
+                  :data-category1Id="c1.categoryId"
+                  :data-categoryName="c1.categoryName"
+                  >{{ c1.categoryName }}</a
+                >
               </h3>
               <div class="item-list clearfix">
                 <div class="subitem">
                   <dl
                     class="fore"
-                    v-for="(c2, index) in c1.categoryChild"
+                    v-for="(c2) in c1.categoryChild"
                     :key="c2.categoryId"
                   >
                     <dt>
-                      <a href="">{{ c2.categoryName }}</a>
+                      <a
+                        href="javascript:;"
+                        :data-category2Id="c2.categoryId"
+                        :data-categoryName="c2.categoryName"
+                        >{{ c2.categoryName }}</a
+                      >
                     </dt>
                     <dd>
                       <em
-                        v-for="(c3, index) in c2.categoryChild"
+                        v-for="(c3) in c2.categoryChild"
                         :key="c3.categoryId"
                       >
-                        <a href="">{{ c3.categoryName }}</a>
+                        <a
+                          href="javascript:;"
+                          :data-category3Id="c3.categoryId"
+                          :data-categoryName="c3.categoryName"
+                          >{{ c3.categoryName }}</a
+                        >
                       </em>
                     </dd>
                   </dl>
@@ -55,24 +70,66 @@
 </template>
  
 <script>
-import { mapState } from "vuex"
+import { mapState } from "vuex";
 
-import throttle from 'lodash/throttle';
+import throttle from "lodash/throttle";
 export default {
   data() {
     return {
+      isShow: true,
       currentIndex: -1,
     };
   },
   mounted() {
-    this.$store.dispatch("get_categroylist");
+    if (this.$route.path !== "/home") {
+      this.isShow = false;
+    }
   },
   methods: {
     //函数节流
-    moveInItem: throttle(function (index) {
-      this.currentIndex = index
-      console.log(index);
-    }, 50, {trailing:false})
+    moveInItem: throttle(
+      function (index) {
+        this.currentIndex = index;
+        // console.log(index);
+      },
+      30,
+      { trailing: false } //延迟时间结束后是否还要继续执行事件
+    ),
+    toSearch(event) {
+      let targetNode = event.target;
+      // console.log(targetNode);
+      let data = targetNode.dataset;
+      let { category1id, category2id, category3id, categoryname } = data;
+      if (categoryname) {
+        let location = {
+          name: "search",
+        };
+        let query = {
+          categoryName: categoryname,
+        };
+        if (category1id) {
+          query.category1Id = category1id;
+        } else if (category2id) {
+          query.category2Id = category2id;
+        } else {
+          query.category3Id = category3id;
+        }
+        if (this.$route.params) {
+          location.params = this.$route.params;
+        }
+        location.query = query;
+
+        this.$router.push(location).catch((err) => {
+          // console.log(err);
+        });
+      }
+    },
+    moveOut() {
+      this.currentIndex = -1;
+      if (this.$route.path !== "/home") {
+        this.isShow = false;
+      }
+    },
   },
   computed: {
     ...mapState({

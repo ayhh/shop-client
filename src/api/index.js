@@ -1,5 +1,5 @@
 import request from './ajax'
-
+import mock from './mock';
 
 export const reqCategoryList = () =>{
   return request({
@@ -8,6 +8,19 @@ export const reqCategoryList = () =>{
   })
 }
 
- 
 
 // reqCategoryList()
+
+export const reqBannerList = () => {
+  return mock({
+    url: '/banner',
+    method: 'get'
+  })
+}
+
+export const reqFloorList = () => {
+  return mock({
+    url: '/floor',
+    method: 'get'
+  })
+}

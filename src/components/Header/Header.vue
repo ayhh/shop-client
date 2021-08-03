@@ -65,11 +65,14 @@ export default {
     toSearch(){
       // this.$router.push('/search'+ this.keyword +'?keyword='+this.keyword.toUpperCase())
       // this.$router.push(`/search/${this.keyword}?keyword=${this.keyword.toUpperCase()}`)
-      this.$router.push({
+      let location = {
         name: 'search',
-        params:{keyword:this.keyword || undefined},
-        query:{keyword:this.keyword.toUpperCase() || undefined}
-      }).catch((err) =>{
+        params:{keyword:this.keyword || undefined}
+      }
+      if (this.$route.query) {
+        location.query = this.$route.query
+      }
+      this.$router.push(location).catch((err) =>{
         // console.log(err);
       })
     }

@@ -2,7 +2,7 @@ import axios from 'axios'
 import Nprogress from 'nprogress';
 
 const service = axios.create({
-  baseURL: '/api',
+  baseURL: '/mock',
   timeout: 20000
 })
 
